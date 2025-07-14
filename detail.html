@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+<link rel="stylesheet" href="professional-style.css">
+
+
+  </head>
+  <body>
+
+
+  <div class="recipe-content">
+  
+  </div>
+</div>
+
+    <div id="detail"></div>
+
+    <script>
+      // ✅ Step 1: localStorage se id le lo jo pehle store ki thi
+      const id = localStorage.getItem("recipeId");
+
+      console.log("localStorage se mili ID:", id);
+
+      // ✅ Step 2: Us ID ka recipe API se fetch karo
+      fetch(`https://dummyjson.com/recipes/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          // ✅ Step 3: Data aane ke baad detail show karo
+          document.getElementById("detail").innerHTML = `
+          
+    <div class="recipe-card">
+      <img  src="${data.image}" width="200" />
+      <h1>${data.name}</h1>
+          <p><strong>Cuisine:</strong> ${data.cuisine}</p>
+          <p><strong>Difficulty:</strong> ${data.difficulty}
+               <strong>Ratings:</strong> ${data.rating}</p>
+        
+          <p><strong>Tags:</strong></p>
+            <ul> ${data.tags.map(item=>`<li>${item}</li>`).join("")}</ul>
+
+            <h3><strong>Ingredients:</strong></h3>
+
+          
+            <ul>${data.ingredients.map(items=>`<li>${items}</li>`).join("")}
+              </ul>
+              
+               <h3><strong> 👨‍🍳 Instructions:</strong></h3>
+                        <ul>${data.instructions.map(items=>`<li>${items}</li>`).join("")}
+                          </ul>
+
+               <h3><strong>Meal Type:</strong></h3>
+                        <ul>${data.mealType.map(items=>`<li>${items}</li>`).join("")}
+                          </ul>
+
+          <p><strong>CaloriesPer Serving:</strong> ${data.caloriesPerServing}</p>
+          <p><strong>PrepTime Minutes:</strong> ${data.prepTimeMinutes}</p>
+          <p><strong>CookTime Minutes: </strong> ${data.cookTimeMinutes}</p>
+          <p><strong>Review Count: </strong> ${data.reviewCount} | <strong> Servings: </strong> ${data.servings}</p>
+
+
+
+          </div>
+        `;
+          console.log("Recipe loaded:", data);
+        })
+        .catch(() => {
+          document.getElementById("detail").innerHTML =
+            "Recipe not found. Check your internet.";
+        });
+
+
+  
+    </script>
+  </body>
+</html>
