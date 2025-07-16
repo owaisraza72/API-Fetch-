@@ -14,7 +14,6 @@
   <div class="recipe-content">
   
   </div>
-</div>
 
     <div id="detail"></div>
 
@@ -35,8 +34,8 @@
       <img  src="${data.image}" width="200" />
       <h1>${data.name}</h1>
           <p><strong>Cuisine:</strong> ${data.cuisine}</p>
-          <p><strong>Difficulty:</strong> ${data.difficulty}
-               <strong>Ratings:</strong> ${data.rating}</p>
+          <p><strong>Difficulty:</strong> ${data.difficulty} |
+               <strong>Ratings: ⭐</strong> ${data.rating}</p>
         
           <p><strong>Tags:</strong></p>
             <ul> ${data.tags.map(item=>`<li>${item}</li>`).join("")}</ul>
