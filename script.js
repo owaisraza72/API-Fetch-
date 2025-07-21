@@ -1,10 +1,12 @@
+// ----------------------------------------------SUPaSE BaSE STRT----------------------------------------------------------------------
+
 // 🔽 Elements Selection: Dropdowns, input field, and display area
 let selectDifficulty = document.getElementById("difficulty");
 let selectCuisine = document.getElementById("cuisine");
 let inputValue = document.getElementById("searchValue");
 let selectRating = document.getElementById("rating");
 let show = document.getElementById("show");
-let Signupbtn = document.getElementById('Signup')
+let Signupbtn = document.getElementById("Signup");
 
 // 🌐 API Endpoint
 let url = `https://dummyjson.com/recipes`;
@@ -87,8 +89,7 @@ function selectFilter() {
   // Filter the recipes based on selected values
   let filtered = allData.filter((element) => {
     // ⭐ Rating string ko number mein badlo
-let matchRating =
-  ratingValue === "" || element.rating === ratingNumber;
+    let matchRating = ratingValue === "" || element.rating === ratingNumber;
 
     return (
       (difficultyValue === "" || element.difficulty === difficultyValue) &&
@@ -141,19 +142,22 @@ function viewDetails(id) {
 // 🚀 Run API call on initial load
 api();
 
+Signupbtn.addEventListener("click", () => {
+  window.location.href = "signup.html";
+});
 
-Signupbtn.addEventListener('click',()=>{
+let userlogined = JSON.parse(localStorage.getItem("userlogin"));
+if (userlogined) {
+  Signupbtn.innerText = "Logout";
 
-  window.location.href="signup.html"
-})
-
-let  userlogined = JSON.parse(localStorage.getItem("userlogin"))
-if(userlogined){
-  Signupbtn.innerText="Logout"
-
-  Signupbtn.addEventListener('click',()=>{
-localStorage.removeItem("userlogin")
-  // window.location.href="signup.html"
-})
-
+  Signupbtn.addEventListener("click", async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Swal.fire("Error", error.message, "error"); // ← Error alert
+    } else {
+      Swal.fire("Logged Out", "You have been logged out!", "success");
+    }
+    localStorage.removeItem("userlogin");
+    // window.location.href="signup.html"
+  });
 }
