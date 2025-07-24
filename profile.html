@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Complete Profile</title>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- 🔵 Modern & Responsive CSS -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            /* 💙 Cool gradient */
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            /* ✨ Soft shadow */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #4facfe;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4facfe;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #348ac7;
+        }
+    </style>
+</head>
+
+<body>
+<button id="logoutbtn">Logout</button>
+    <!-- 🔲 Profile Form Card -->
+    <div class="card">
+        <h2>Complete Your Profile</h2>
+
+        <!-- 📱 Phone Number Field -->
+        <input type="text" id="phone" placeholder="Phone Number" />
+
+        <!-- 🌄 Profile Image URL Field -->
+        <input type="text" id="avatar" placeholder="Profile Image URL" />
+
+        <!-- 📅 Date of Birth Field -->
+        <input type="date" id="dob" placeholder="Date of Birth" />
+
+        <!-- 🚻 Gender Dropdown -->
+        <select id="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <!-- 💾 Submit Button -->
+        <button id="completeProfile">Save Profile</button>
+    </div>
+  <button class="back" >Back to Home</button>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./subadata.js" type="module">
+import { client } from "./subaConfig.js";
+       
+        // 🚀 Function to handle profile update
+        completeProfile.addEventListener('click',async() => {
+            
+let completeProfile = document.getElementById('completeProfile')
+            // 🧾 Step 1: Get input field values
+            const phone = document.getElementById("phone").value;
+            const avatar = document.getElementById("avatar").value;
+            const dob = document.getElementById("dob").value;
+            const gender = document.getElementById("gender").value;
+
+            // 🔍 Step 2: Get current user from Supabase Auth
+            const { data: { user }, error } = await client.auth.getUser();
+
+            // ❌ If user not found or error occurred
+            if (error || !user) {
+                Swal.fire("Error", "User not found or not logged in", "error");
+                return;
+            }
+
+            // 💾 Step 3: Update the user_information table
+            const { error: updateError } = await client
+                .from("user_information") // ← Your table name
+                .update({
+                    phone: phone,
+                    avatar_url: avatar,
+                    dob: dob,
+                    gender: gender
+                })
+                .eq("id", user.id); // ← Match with the logged-in user ID
+
+            // ✅ Step 4: Alert user with success or error message
+            if (updateError) {
+                Swal.fire("Error", updateError.message, "error");
+            } else {
+                Swal.fire("Success", "Profile updated successfully!", "success");
+            }
+        })
+    </script>
+
+</body>
+
+</html>

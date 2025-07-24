@@ -1,5 +1,3 @@
-// ----------------------------------------------SUPaSE BaSE STRT----------------------------------------------------------------------
-
 // 🔽 Elements Selection: Dropdowns, input field, and display area
 let selectDifficulty = document.getElementById("difficulty");
 let selectCuisine = document.getElementById("cuisine");
@@ -142,22 +140,7 @@ function viewDetails(id) {
 // 🚀 Run API call on initial load
 api();
 
-Signupbtn.addEventListener("click", () => {
+let loginbtn = document.getElementById("loginbtn");
+loginbtn.addEventListener("click", () => {
   window.location.href = "signup.html";
 });
-
-let userlogined = JSON.parse(localStorage.getItem("userlogin"));
-if (userlogined) {
-  Signupbtn.innerText = "Logout";
-
-  Signupbtn.addEventListener("click", async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      Swal.fire("Error", error.message, "error"); // ← Error alert
-    } else {
-      Swal.fire("Logged Out", "You have been logged out!", "success");
-    }
-    localStorage.removeItem("userlogin");
-    // window.location.href="signup.html"
-  });
-}

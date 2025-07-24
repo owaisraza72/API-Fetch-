@@ -66,12 +66,42 @@
       font-weight: bold;
       font-size: 15px;
       cursor: pointer;
+      margin-bottom: 8px;
       transition: background-color 0.3s;
+      transition: all 0.3s ease-in-out;
+
     }
 
     form button:hover {
       background-color: #0097a7;
+      transform: translateY(-8%);
+
     }
+
+    #googlebtn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      background-color: #f8f3f3;
+      color: #444;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      transition: all 0.3s ease-in-out;
+    }
+
+    #googlebtn:hover {
+      background-color: #f5f5f5;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-8%);
+    }
+
 
     p {
       text-align: center;
@@ -83,10 +113,6 @@
       font-weight: bold;
       color: #26c6da;
       cursor: pointer;
-    }
-
-    span:hover {
-      text-decoration: underline;
     }
 
     @keyframes fadeIn {
@@ -113,10 +139,14 @@
       font-size: 15px;
       cursor: pointer;
       transition: background-color 0.3s;
+      transition: all 0.3s ease-in-out;
+
     }
 
     .back:hover {
       background-color: #0097a7;
+      transform: translateY(-8%);
+
     }
   </style>
 </head>
@@ -129,7 +159,7 @@
     <input type="email" id="email" placeholder="Enter Your Email" />
     <input type="password" id="password" placeholder="Enter Password" />
     <button id="signbtn">Sign Up</button>
-    <p>Already have an Account? <span onclick="toggleLogin()">Login</span></p>
+    <p>Already have an Account? <span class="toggleLogin">Login</span></p>
   </form>
 
   <!-- ✅ Login Form -->
@@ -138,152 +168,19 @@
     <input type="email" id="loginemail" placeholder="Enter Your Email" />
     <input type="password" id="loginpassword" placeholder="Enter Your Password" />
     <button id="loginbtn">Login</button>
-    <p>Don't have an Account? <span onclick="toggleSignup()">Sign Up</span></p>
+    <button id="googlebtn"
+      style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; border: none; border-radius: 6px; background-color: #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" width="20"
+        height="20" />
+      <span>Continue with Google</span>
+    </button>
+
+    <p>Don't have an Account? <span class="toggleSignup">Sign Up</span></p>
   </form>
-  <button class="back" onclick="back()">Back to Home</button>
+  <button class="back">Back to Home</button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-
-    // ================================ Data Supabase link=============================================================================
-
-    const supabaseUrl = "https://blkxlczwjkjgdfixbide.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJsa3hsY3p3amtqZ2RmaXhiaWRlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4MzA3NDcsImV4cCI6MjA2ODQwNjc0N30.z6vZxMuPTvTn7ShSexmSo9C5gGJpl4AvJCSBknIDOZc";
-    const client = supabase.createClient(supabaseUrl, supabaseKey);
-
-
-    // ======================================= Getting DOM elements============================================================
-    const usersignup = document.getElementById('usersignup');
-    const userlogin = document.getElementById('userlogin');
-    const name = document.getElementById('name');
-    const useremail = document.getElementById('email');
-    const userpassword = document.getElementById('password');
-    const loginemail = document.getElementById('loginemail');
-    const loginpassword = document.getElementById('loginpassword');
-    const signbtn = document.getElementById('signbtn');
-    const loginbtn = document.getElementById('loginbtn');
-
-    // Getting saved users or initializing empty array
-    // let data = JSON.parse(localStorage.getItem('signData')) || [];
-
-    // Sign Up Button Click
-    signbtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-
-      // let username = name.value;
-      // let userEmail = email.value;
-      // let password = password.value;
-
-      if (!name || !useremail || !userpassword) {
-        Swal.fire("Oops!", "Please fill in all fields", "warning");
-        return;
-      }
-
-      // data.push(newUser);
-      // localStorage.setItem('signData', JSON.stringify(data));
-
-
-      const { data, error } = await client.auth.signUp({
-        email: useremail.value,
-        password: userpassword.value,
-      })
-
-      if (error) {
-        Swal.fire("Insert Error", error.message, "error");
-      }
-      else {
-
-        Swal.fire("Success!", "You have signed up successfully!");
-      }
-
-
-      toggleLogin();
-
-      // // Insert name into user_information table
-
-      // const { error : inserterror } = await client
-      //   .from("user_information")
-      //   .insert({ id: data.user.id, full_name: name.value });
-
-      // if (insertError) {
-      //   Swal.fire("Error", insertError.message, "error");
-      //   return;
-      // } else {
-
-      //   Swal.fire("Success!", "You have signed up successfully!");
-      // }
-
-
-
-
-
-
-
-
-      // Clear fields
-      name.value = "";
-      email.value = "";
-      password.value = "";
-
-      // Switch to login
-      toggleLogin();
-    });
-
-    // Login Button Click
-    loginbtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-
-
-      const { data, error } = await client.auth.signInWithPassword({
-        email: loginemail.value,
-        password: loginpassword.value,
-
-      })
-      if (error) {
-        Swal.fire("Error", error.message, "error");
-      } else {
-        Swal.fire("Success", "Login successful!", "success")
-        window.location.href = "index.html"; // Redirect on success
-        localStorage.setItem("userlogin", JSON.stringify("login"))
-      }
-
-    });
-    // async function render() {
-    //     const { data, error } = await client
-    //       .from("user_information")
-    //       .select();
-
-    //     if (error) {
-    //       console.error("Select Error:", error);
-    //     } else {
-    //       console.log("Fetched Data:", data);
-    //     }
-    //   }
-    //   render();
-
-
-
-
-
-    function back() {
-      window.location.href = "index.html"
-
-    }
-
-    // Toggle to Signup form
-    function toggleSignup() {
-      userlogin.style.display = "none";
-      usersignup.style.display = "block";
-    }
-
-    // Toggle to Login form
-    function toggleLogin() {
-      usersignup.style.display = "none";
-      userlogin.style.display = "block";
-    }
-
-
-
+  <script src="./subadata.js" type="module">
   </script>
 </body>
 
