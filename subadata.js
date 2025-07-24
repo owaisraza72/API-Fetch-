@@ -48,8 +48,8 @@ if (signupAcc) {
 
     // Optional: Insert Name into user_information Table
     const { error: insertError } = await client
-      .from("user_information")
-      .insert({ id: data.user.id, full_name: name.value });
+      .from("user_profile_food")
+      .insert({ id: data.user.id, full_name: name.value, });
 
     if (insertError) {
       Swal.fire("Error", insertError.message, "error");

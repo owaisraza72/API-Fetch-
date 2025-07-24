@@ -82,19 +82,23 @@
 </head>
 
 <body>
-<button id="logoutbtn">Logout</button>
+    <button id="logoutbtn">Logout</button>
     <!-- 🔲 Profile Form Card -->
     <div class="card">
         <h2>Complete Your Profile</h2>
 
-        <!-- 📱 Phone Number Field -->
-        <input type="text" id="phone" placeholder="Phone Number" />
-
         <!-- 🌄 Profile Image URL Field -->
-        <input type="text" id="avatar" placeholder="Profile Image URL" />
+        <input type="text" id="fullname" placeholder="Enter Full Name" />
+
+
+        <!-- 📱 Phone Number Field -->
+        <input type="text" id="email" placeholder="Email" />
+
 
         <!-- 📅 Date of Birth Field -->
         <input type="date" id="dob" placeholder="Date of Birth" />
+
+        <!-- 📱 Phone Number Field -->
 
         <!-- 🚻 Gender Dropdown -->
         <select id="gender">
@@ -104,49 +108,56 @@
             <option value="Other">Other</option>
         </select>
 
+        <input type="text" id="phone" placeholder="Phone Number" />
+
         <!-- 💾 Submit Button -->
         <button id="completeProfile">Save Profile</button>
     </div>
-  <button class="back" >Back to Home</button>
+    <button class="back">Back to Home</button>
 
 
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./subadata.js" type="module">
-import { client } from "./subaConfig.js";
-       
+
+        import { client } from "./subaConfig.js";
+
         // 🚀 Function to handle profile update
-        completeProfile.addEventListener('click',async() => {
-            
-let completeProfile = document.getElementById('completeProfile')
+        completeProfile.addEventListener('click', async () => {
+
+            let completeProfile = document.getElementById('completeProfile')
             // 🧾 Step 1: Get input field values
-            const phone = document.getElementById("phone").value;
-            const avatar = document.getElementById("avatar").value;
+            const fullname = document.getElementById("fullname").value;
+            const email = document.getElementById("email").value;
             const dob = document.getElementById("dob").value;
             const gender = document.getElementById("gender").value;
+            const phone = document.getElementById("phone").value;
 
             // 🔍 Step 2: Get current user from Supabase Auth
             const { data: { user }, error } = await client.auth.getUser();
 
             // ❌ If user not found or error occurred
             if (error || !user) {
-                Swal.fire("Error", "User not found or not logged in", "error");
+                Swal.fire("Error", " ❌ User not found or not logged in", "error");
                 return;
             }
 
             // 💾 Step 3: Update the user_information table
             const { error: updateError } = await client
-                .from("user_information") // ← Your table name
+                .from("user_profile_food") // ← Your table name
                 .update({
-                    phone: phone,
-                    avatar_url: avatar,
+                    full_name: fullname,
+                    email: email,
                     dob: dob,
-                    gender: gender
+                    gender: gender,
+                    contact: phone
                 })
                 .eq("id", user.id); // ← Match with the logged-in user ID
 
             // ✅ Step 4: Alert user with success or error message
+            console.log(updateError);
             if (updateError) {
+
                 Swal.fire("Error", updateError.message, "error");
             } else {
                 Swal.fire("Success", "Profile updated successfully!", "success");
