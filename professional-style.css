@@ -65,6 +65,7 @@ select {
   background-repeat: no-repeat;
   background-position: right 1px center;
   background-size: 0px 0px;
+  width: 150px;
   transition: all 0.3s ease;
 }
 select:focus {
