@@ -145,7 +145,8 @@ if (googleAuth) {
     const { data, error } = await client.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:5500/profile.html", // ✅ force redirect after login
+        redirectTo:
+          "https://owaisraza72.github.io/Food-Recipes-API/profile.html", // ✅ force redirect after login
       },
     });
 
@@ -218,7 +219,7 @@ if (completeProfile) {
         gender: gender,
         contact: phone,
       })
-      .eq("id",user.id); // ← Match with the logged-in user ID
+      .eq("id", user.id); // ← Match with the logged-in user ID
 
     // ✅ Step 4: Alert user with success or error message
     console.log(updateError);
@@ -229,5 +230,4 @@ if (completeProfile) {
     }
     cart.style.display = "none";
   });
-
 }
