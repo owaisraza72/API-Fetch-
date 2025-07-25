@@ -49,7 +49,7 @@ if (signupAcc) {
     // Optional: Insert Name into user_information Table
     const { error: insertError } = await client
       .from("user_profile_food")
-      .insert({ id: data.user.id, full_name: name.value, });
+      .insert({ id: data.user.id, full_name: name.value });
 
     if (insertError) {
       Swal.fire("Error", insertError.message, "error");
@@ -158,11 +158,11 @@ if (googleAuth) {
         confirmButtonText: "OK",
       });
     } else {
-      console.log("Redirecting to Google login...", data);
+      console.log("Google login...", data);
 
       // ✅ Show SweetAlert with Google icon
       Swal.fire({
-        title: "Redirecting to Google",
+        title: "Google Account Login ",
         html: `
           <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google Icon" width="50" style="margin-bottom: 10px;" />
           <p style="margin-top: 5px;">You are being redirected to Google login</p>
@@ -181,4 +181,53 @@ if (back) {
   back.addEventListener("click", () => {
     window.location.href = "index.html";
   });
+}
+
+let completeProfile = document.getElementById("completeProfile");
+const cart = document.querySelector(".card").value;
+
+if (completeProfile) {
+  // 🚀 Function to handle profile update
+  completeProfile.addEventListener("click", async () => {
+    // 🧾 Step 1: Get input field values
+    const fullname = document.getElementById("fullname").value;
+    const email = document.getElementById("email").value;
+    const dob = document.getElementById("dob").value;
+    const gender = document.getElementById("gender").value;
+    const phone = document.getElementById("phone").value;
+
+    // 🔍 Step 2: Get current user from Supabase Auth
+    const {
+      data: { user },
+      error,
+    } = await client.auth.getUser();
+
+    // ❌ If user not found or error occurred
+    if (error || !user) {
+      Swal.fire("Error", " ❌ User not found or not logged in", "error");
+      return;
+    }
+
+    // 💾 Step 3: Update the user_information table
+    const { error: updateError } = await client
+      .from("user_profile_food") // ← Your table name
+      .update({
+        full_name: fullname,
+        email: email,
+        dob: dob,
+        gender: gender,
+        contact: phone,
+      })
+      .eq("id",user.id); // ← Match with the logged-in user ID
+
+    // ✅ Step 4: Alert user with success or error message
+    console.log(updateError);
+    if (updateError) {
+      Swal.fire("Error", updateError.message, "error");
+    } else {
+      Swal.fire("Success", "Profile updated successfully!", "success");
+    }
+    cart.style.display = "none";
+  });
+
 }
