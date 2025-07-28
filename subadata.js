@@ -21,6 +21,12 @@ const logoutbtn = document.getElementById("logoutbtn");
 
 const googleAuth = document.getElementById("googlebtn");
 const back = document.querySelector(".back");
+const profileCart = document.querySelector(".container");
+
+const newPassword = document.querySelector(".newpassword");
+const confirmPassword = document.querySelector(".confirmpassword");
+const changePasswordBtn = document.querySelector(".changebtn");
+const resetPassword = document.querySelector(".resetpassword");
 
 // const logoutBtn = document.getElementById("loginbtn"); // Make sure this button has id="logoutbtn" in your HTML
 
@@ -39,6 +45,11 @@ if (signupAcc) {
     const { data, error } = await client.auth.signUp({
       email: useremail.value,
       password: userpassword.value,
+      options: {
+        data: {
+          displayName: name.value,
+        },
+      },
     });
 
     if (error) {
@@ -64,7 +75,8 @@ if (signupAcc) {
     userpassword.value = "";
 
     // Switch to Login Form
-    toggleLogin();
+    usersignup.style.display = "none";
+    userlogin.style.display = "block";
   });
 }
 
@@ -80,12 +92,14 @@ if (loginAcc) {
 
     if (error) {
       Swal.fire("Error", error.message, "error");
-      return;
+    } else {
+      Swal.fire("Success", "Login successful!", "success");
+      window.location.href = "profile.html";
+      profileCart.style.display = "block";
     }
-
-    Swal.fire("Success", "Login successful!", "success");
-    window.location.href = "profile.html";
   });
+}
+if (profileCart) {
 }
 
 // ======================================= Logout Handler =====================================================================
@@ -110,7 +124,6 @@ if (toggleSignup) {
     usersignup.style.display = "block";
   });
 }
-
 if (toggleLogin) {
   toggleLogin.addEventListener("click", () => {
     usersignup.style.display = "none";
@@ -160,6 +173,7 @@ if (googleAuth) {
       });
     } else {
       console.log("Google login...", data);
+      // window.location.href = "profile.html";
 
       // ✅ Show SweetAlert with Google icon
       Swal.fire({
@@ -176,6 +190,50 @@ if (googleAuth) {
   });
 }
 
+// ======================================= Reset Password ===============================================================
+
+if (resetPassword) {
+  resetPassword.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const { data, error } = await client.auth.resetPasswordForEmail(
+      loginemail.value,
+
+      {
+        redirectTo: "http://127.0.0.1:5500/resetpassword.html",
+      }
+    );
+    if (error) {
+      Swal.fire("Error", error.message);
+      console.log("error", error.message);
+    } else {
+      Swal.fire("Confirm Reset Password", "Please check Your Email");
+      console.log(data);
+    }
+  });
+}
+
+if (changePasswordBtn) {
+  changePasswordBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    if (newPassword.value !== confirmPassword.value) {
+      Swal.fire("This Password doesn't Match");
+      return;
+    }
+
+    const { data, error } = await client.auth.updateUser({
+      password: newPassword.value,
+    });
+
+    if (error) {
+      console.error(error.message);
+
+      Swal.fire("Error", error.message);
+    } else {
+      window.location.href = "signup.html";
+      console.log(data);
+    }
+  });
+}
 // ======================================= Back Button Function ===============================================================
 
 if (back) {
@@ -184,50 +242,129 @@ if (back) {
   });
 }
 
-let completeProfile = document.getElementById("completeProfile");
-const cart = document.querySelector(".card").value;
+// =================================================== Profile Page ===============================================================
+
+const profilename = document.getElementById("fullname");
+const profileemail = document.getElementById("email");
+
+const dob = document.getElementById("dob");
+const age = document.getElementById("age");
+const gender = document.getElementById("gender");
+const filelogo = document.getElementById("file");
+const phone = document.getElementById("phone");
+
+const completeProfile = document.getElementById("completeProfile");
+let profileDiv = document.getElementById("profileshow");
 
 if (completeProfile) {
-  // 🚀 Function to handle profile update
+    profileCart.style.display = "block";
+  //
   completeProfile.addEventListener("click", async () => {
-    // 🧾 Step 1: Get input field values
-    const fullname = document.getElementById("fullname").value;
-    const email = document.getElementById("email").value;
-    const dob = document.getElementById("dob").value;
-    const gender = document.getElementById("gender").value;
-    const phone = document.getElementById("phone").value;
+    //  Get input field values
 
-    // 🔍 Step 2: Get current user from Supabase Auth
+    //  Get current user from Supabase Auth
     const {
       data: { user },
       error,
     } = await client.auth.getUser();
 
-    // ❌ If user not found or error occurred
+    //  If user not found or error occurred
     if (error || !user) {
       Swal.fire("Error", " ❌ User not found or not logged in", "error");
       return;
     }
+    //  File URL ko pehle khali set kya
+    let fileUrl = "";
 
-    // 💾 Step 3: Update the user_information table
-    const { error: updateError } = await client
-      .from("user_profile_food") // ← Your table name
+    //  File input se image li (pehli file hi lenge)
+    const file = filelogo.files[0];
+
+    //  Agar user ne file upload ki hai
+    if (file) {
+      //  File ka ek unique path bnaya (user ID + time + file name)
+
+      //yani iss tarah k diff path hoga : user/jslkfjk3/154651351513/imag.png
+      const filePath = `users/${user.id}/${Date.now()}_${file.name}`; //Date now milisec m num return krega jis se path hr file k different hoga
+
+      //  Supabase Storage me file upload ki h before the bucket creat supbase (bucket ka naam "images" hai)
+      const { data: uploadData, error: uploadError } = await client.storage
+        .from("images") //  bucket name
+        .upload(filePath, file); // path aur file bhejna hai
+
+      if (uploadError) {
+        Swal.fire(
+          "Error",
+          "❌ File upload failed: " + uploadError.message,
+          "error"
+        );
+        return;
+      }
+
+      //  File ka public URL nikaal taake wo database me save ho
+      const { data: publicUrlData } = client.storage
+        .from("images")
+        .getPublicUrl(filePath);
+
+      // Public URL ko variable me daal do
+      fileUrl = publicUrlData.publicUrl;
+    }
+
+    //  Update the user_information table
+    const { data, error: updateError } = await client
+      .from("user_profile_food") //  table name
       .update({
-        full_name: fullname,
-        email: email,
-        dob: dob,
-        gender: gender,
-        contact: phone,
+        full_name: profilename.value,
+        email: profileemail.value,
+        dob: dob.value,
+        age: age.value ? Number(age.value) : null, //  numeric conversion using terni oper
+        gender: gender.value,
+        file: fileUrl,
+        contact: phone.value,
       })
-      .eq("id", user.id); // ← Match with the logged-in user ID
+      .eq("id", user.id); // Match with the logged-in user ID
 
-    // ✅ Step 4: Alert user with success or error message
-    console.log(updateError);
     if (updateError) {
       Swal.fire("Error", updateError.message, "error");
     } else {
       Swal.fire("Success", "Profile updated successfully!", "success");
     }
-    cart.style.display = "none";
+    profileCart.style.display = "none";
+
+    render();
   });
 }
+async function render() {
+  //Get the current logged-in user
+  const {
+    data: { user },
+    error: authError,
+  } = await client.auth.getUser();
+
+  //  Agar user ya error ho
+  if (authError || !user) {
+    console.log("❌ Auth error or user not logged in", authError?.message);
+    return;
+  }
+  const { data, error } = await client
+    .from("user_profile_food")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (error) {
+    console.log(error);
+  } else {
+    console.log(data);
+    const { full_name, email, dob, age, gender, file, contact } = data;
+    profileDiv.innerHTML += `<div id="card">
+    <img src="${file}" class="logo">
+    <h2> ${full_name}</h2>
+    <p>Email : ${email}</p>
+    <p>D.O.B : ${dob}</p>
+    <p>Age : ${age}</p>
+    <p>Gender : ${gender}</p>
+    <p>Contact : ${contact}</p>
+    </div>`;
+  }
+}
+

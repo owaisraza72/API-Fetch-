@@ -11,138 +11,46 @@
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- 🔵 Modern & Responsive CSS -->
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", sans-serif;
-        }
-
-        body {
-
-            background: linear-gradient(to right, #b0daff, #dafdff);
-        }
-
-        .card {
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            /* 💙 Cool gradient */
-            /* display: flex; */
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            margin: auto;
-            border-radius: 15px;
-            /* width: 100%; */
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            /* ✨ Soft shadow */
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            transition: border-color 0.3s;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: #4facfe;
-            outline: none;
-        }
-
-        button {
-            width: 15%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: #4facfe;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #348ac7;
-
-        }
-
-        #completeProfile {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background-color: #4facfe;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-
-        }
-
-        #completeProfile:hover {
-            background-color: #348ac7;
-
-        }
-    </style>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="profile.css" />
 </head>
 
 <body>
-    <button class="back">Back to Home</button>
+    <button class="back">🏠 Home</button>
+    <button id="logoutbtn">🔒 Logout</button>
 
-    <button id="logoutbtn">Logout</button>
-    <!-- 🔲 Profile Form Card -->
-    <div class="card">
-        <h2>Complete Your Profile</h2>
+    <div class="container">
+        <div class="card animate__animated animate__fadeInDown">
+            <h2>Complete Your Profile</h2>
 
-        <!-- 🌄 Profile Image URL Field -->
-        <input type="text" id="fullname" placeholder="Enter Full Name" />
+            <input type="text" id="fullname" placeholder="🧑 Full Name" />
+            <input type="email" id="email" placeholder="📧 Email Address" />
+            <input type="date" id="dob" placeholder="📅 Date of Birth" />
+            <input type="number" id="age" placeholder="🔢 Age" />
 
+            <select id="gender">
+                <option value="">⚧ Select Gender</option>
+                <option value="Male">👨 Male</option>
+                <option value="Female">👩 Female</option>
+                <option value="Other">🌈 Other</option>
+            </select>
 
-        <!-- 📱 Phone Number Field -->
-        <input type="text" id="email" placeholder="Email" />
+            <label for="file">📁 Upload Image
+                <input type="file" id="file" accept="image/*" />
+            </label>
 
+            <input type="text" id="phone" placeholder="📱 Phone Number" />
 
-        <!-- 📅 Date of Birth Field -->
-        <input type="date" id="dob" placeholder="Date of Birth" />
-
-        <!-- 📱 Phone Number Field -->
-
-        <!-- 🚻 Gender Dropdown -->
-        <select id="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Other">Other</option>
-        </select>
-
-        <input type="text" id="phone" placeholder="Phone Number" />
-
-        <!-- 💾 Submit Button -->
-        <button id="completeProfile">Save Profile</button>
+            <button id="completeProfile">💾 Save Profile</button>
+        </div>
     </div>
 
+    <div id="profileshow" class="profile-card">
 
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="./subadata.js" type="module">
-
-    </script>
-
+    <!-- JS -->
+    <script type="module" src="./subadata.js"></script>
 </body>
 
 </html>
